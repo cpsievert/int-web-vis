@@ -1,4 +1,14 @@
-\chapter{INTERACTIVE DATA VISUALIZATION ON THE WEB USING R}
+---
+title: "Interactive data visualization on the web using R"
+author: Carson Sievert
+documentclass: article
+fontsize: 12pt
+geometry: margin=1in
+linkcolor: cyan
+bibliography: references.bib
+abstract: Some summary
+keywords: uno, dos, tres
+---
 
 # Introduction
 
@@ -216,12 +226,9 @@ Interactive web graphics are already widely used for presenting and communicatin
 
 All of the examples in the [exploring pedestrian counts](#exploring-pedestrian-counts) section were created with __plotly__ and are available as standalone HTML files that can be easily deployed and shared with well-established web technologies. The sections [tracking disease outbreak](#tracking-disease-outbreak) and [exploring Australian election data](#exploring-australian-election-data) link __plotly__ graphs using the __shiny__ package for authoring web applications to enable linked interactions that compute statistical summaries based on graphical queries defined by users. Furthermore, all of the examples across all of these sections were created purely within R, and requires no knowledge of web technologies such as HTML/JavaScript/CSS from the user. As a result, projects such as __plotly__ and __shiny__ help analysts focus on their primary task (data analysis) rather than the implementation details typically involved when creating interactive web graphics.
 
+<!--
 # Acknowledgements
 
-Thank you to the organizers (Nicholas Tierney, Miles McBain, Jessie Roberts) of the rOpenSci hackathon as well as my group members (Heike Hofmann, Di Cook, Rob Hyndman, Ben Marwick, Earo Wang) where the __eechidna__ package first took flight. Thank you to Di Cook and Earo Wang for sparking my interest in the pedestrians data, helping to implement the __pedestrians__ R package, and many fruitful discussions (some with Heike Hofmann and Rob Hyndman). 
-
-\chapter{PLOTLY FOR R}
-
-I am sole author of this chapter which explains and partially documents the R package **plotly**. Since interactive and dynamic graphics are not allowed on the University's publishing platform, I highly suggest viewing the web-based version of this chapter -- <https://cpsievert.github.io/plotly_book/>
-
-Toby Dylan Hocking was the original author of the **plotly** package, but when I became maintainer and [project lead](https://github.com/ropensci/plotly/graphs/contributors?from=2015-01-12&to=2016-11-28&type=c), the package has a evolved from a fairly basic **ggplot2** converter to a more general graphing library with rich support for [linking](#multiple-linked-views) and [animating](#animating-views) views.
+Thank you to the organizers (Nicholas Tierney, Miles McBain, Jessie Roberts) of the rOpenSci hackathon as well as my group members (Heike Hofmann, Di Cook, Rob Hyndman, Ben Marwick, Earo Wang) where the __eechidna__ package first took flight. Thank you to Di Cook and Earo Wang for sparking my interest in the pedestrians data, helping to implement the __pedestrians__ R
+package, and many fruitful discussions (some with Heike Hofmann and Rob Hyndman). 
+-->

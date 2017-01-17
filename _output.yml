@@ -1,0 +1,7 @@
+# http://www.grad-college.iastate.edu/current/thesis/organizing_thesis/
+bookdown::pdf_book:
+  template: jcgs-template.tex
+  toc: no
+  keep_tex: yes
+  # hmm, natbib doesn't seem to work?
+  citation_package: biblatex
