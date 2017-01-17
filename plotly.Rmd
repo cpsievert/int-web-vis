@@ -1,0 +1,227 @@
+\chapter{INTERACTIVE DATA VISUALIZATION ON THE WEB USING R}
+
+# Introduction
+
+@Cook:2007uk proposed a taxonomy of interactive data visualization based on three fundamental data analysis tasks: finding Gestalt, posing queries, and making comparisons. 
+The top-level of the taxonomy comes in two parts: _rendering_, or what to show on a plot; and _manipulation_, or what to do with plots. Under the manipulation branch, they describe three branches of manipulation: focusing individual views, arranging many views, and linking multiple views. Of course, each of the three manipulation branches include a set of techniques for accomplishing a specific task (e.g., within focusing views: controlling aspect ratio, zoom, pan, etc), and they provide a series of examples demonstrating techniques using the XGobi software toolkit [@xgobi]. This paper applies similar interactive techniques to analyze data from three different sources using interactive web graphics.
+
+Traditionally, interactive graphics software toolkits are available as desktop applications, but more recently, toolkits have used a web-based approach. In addition to being easier to share and embed within documents, a web-based approach opens up more potential for linking views between different interactive graphics toolkits. This ability grants a tremendous amount of power to the analyst since they may combine the strengths of several systems at once. However, unfortunately, there has been a surprising lack of work done on enabling graphical queries between multiple views (like the work done by @Buja:1991vh; @MANET; @Cook:2007uk; @ggobi:2007, but in a web-based environment).
+
+For a number of years, R users have been able to link arbitrary views via the __shiny__ package -- a reactive programming framework for authoring web applications entirely within R [@shiny]. Although __shiny__ is a powerful tool for prototyping, it may introduce unnecessary computational complexity, and lacks semantics for performing graphical queries on web-based graphics. As a result, when linking views in a __shiny__ app, one typically has to resort to a naive updating rule -- when a query is made, the entire image/graph has to be redrawn. By adding semantics for graphical queries, it allows the underlying graphing libraries to be more intelligent about updating rules which generally leads to a more responsive graphical query.
+
+The R package __plotly__ is one such project that has semantics for linking views with and without __shiny__ [@plotly]; [@plotly-book]. All of the examples in the [exploring pedestrian counts](#exploring-pedestrian-counts) section are available as standalone HTML files (i.e., without __shiny__) and were created entirely within R via __plotly__ and __leaflet__ (a package for creating interactive web-based maps) [@leaflet]. There are, of course, limitations to the types of links one may create without __shiny__, and some of the examples in [tracking disease outbreak](#Tracking-disease-outbreak) and [exploring Australian election data](#exploring-australian-election-data) embed __plotly__ graphs within __shiny__ to dynamically perform customized R computations in response to user events.
+
+<!-- 
+Furthermore, since the information required to perform the redraw has to be sent R session to a web browser, even simple redraws can not be performed within 1/60th of a second to appear instaneous. 
+-->
+
+<!-- Old
+A general purpose interactive statistical graphics system should possess many direct manipulation techniques such as identifying (i.e., mousing over points to reveal labels), focusing (i.e., view size adjustment, pan and zoom), linked brushing, etc. However, it is the intricate management of information across multiple views of data in response to user events that is most valuable. Extending ideas from [@viewing-pipeline], [@plumbing] point out that any visualization system with linked views must implement a data pipeline. That is, a "central commander" must be able to handle interaction(s) with a given view, translate its meaning to the data space, and update any linked view(s) accordingly. In order to do so, the commander must know, and be able to compute, function(s) from data to visual space, as well as from visual space to the data. Implementing a pipeline that is fast, general, and able to handle statistical transformations is incredibly difficult. Unfortunately, literature on the implementation of such pipelines is virtually non-existent, but @Xie:2014co provides a nice overview of the implementation details in the R package __cranvas__ [@cranvas].
+-->
+
+<!--
+## Multiple linked views
+
+Multiple linked views is a concept that has existed in many forms within the statistical graphics and information visualization communities for decades [@ggobi:2007]; [@Ahlberg:1997tb]. @Cook:2007uk provides nice motivation for and definition of multiple linked views:
+
+> Multiple linked views are the optimal framework for posing queries about data. A user should be able to pose a query graphically, and a computer should be able to present the response graphically as well. Both query and response should occur in the same visual field. This calls for a mechanism that links the graphical query to the graphical response. A graphical user interface that has such linking mechanisms is an implementation of the notion of "multiple linked views."
+
+In a multiple linked views system, all relevant graphics dynamically update based on meaningful user interaction(s). 
+
+That implies, at the very least, the system must be aware of graphical elements that are semantically related -- usually through the data used to generated them. 
+
+In some cases, that implies transformations from data to plot must be embedded in the system, and dynamically re-execute when necessary [@viewing-pipeline]. Furthermore, the system must also be aware of the mapping from 
+
+There are a number of R packages that provide a graphics rendering toolkits with built-in support for multiple linked views. Some are implemented as desktop applications [@rggobi]; [@cranvas]; [@iPlots]; [@loon], while others are implemented within a web-based environment [@animint]; [@ggvis]; [@rbokeh]. In addition to being easier to share, the advantage of using web-based option(s) is that we can link views across different systems. To date, the most versatile tool for linking arbitrary views from R is **shiny** [@shiny], which provides a reactive programming framework for authoring web applications powered by R. [Linking views with shiny](#linking-views-with-shiny) explains how to access plotly events on a shiny server, and informing related views about the events.  
+
+Although **shiny** apps provide a tremendous amount of flexibility when linking views, deploying and sharing shiny apps is way more complicated than a standalone HTML file. When you print a plotly object (or any object built on top of the **htmlwidgets** [@htmlwidgets] infrastructure) it produces a standalone HTML file with some interactivity already enabled (e.g., zoom/pan/tooltip). Moreover, the **plotly** package is unique in the sense that you can link multiple views without shiny in three different ways: inside the same plotly object, link multiple plotly objects, or even link to other htmlwidget packages such as **leaflet** [@leaflet]. Furthermore, since plotly.js has some built-in support for performing statistical summaries, in some cases, we can produce aggregated views of selected data. [Linking views without shiny](#linking-views-with-shiny) explains this framework in detail through a series of examples.
+
+Before exploring the two different approaches for linking views, it can be useful to understand a bit about how interactive graphics systems work, in general. @viewing-pipeline and @plumbing discuss the fundamental elements that all interactive graphics systems must possess -- the most important being the concept of a data-plot-pipeline. As @plumbing states: "A pipeline controls the transformation from data to graphical objects on our screens". All of the software discussed in this work describes systems implemented as desktop applications, where the entire pipeline resides on a single machine. However, the situation becomes more complicated in a web-based environment. Developers have to choose more carefully where computations should occur -- in the browser via `JavaScript` (typically more efficient, and easy to share, but a lack of statistical functionality) or in a statistical programming language like `R` (introduces a complicated infrastructure which compromises usability).
+
+Figure \@ref(fig:server-client) provides a basic visual depiction of the two options to consider when linking views in a web-based environment. [Linking views without shiny](#linking-views-with-shiny) explores cases where the pipeline resides entirely within a client's web-browser, without any calls to a separate process. From a user perspective, this is highly desirable because visualizations are then easily shared and viewed from a single file, without any software requirements (besides a web browser). On the other hand, it is a restrictive environment for statistical computing since we can not directly leverage R's computational facilities.^[If the number of possible selection states is small, it may be possible to pre-compute all possible (statistical) results, and navigate them without recomputing on the fly.] 
+On other words, whenever the pipeline involves re-computing a statistical model, or performing a complicated aggregation, the best option is to [link views with shiny](#linking-views-with-shiny).
+
+```{r ggobi-pipeline, echo=FALSE, fig.cap="A comparison of the GGobi pipeline to a hybrid approach to linked views."}
+knitr::include_graphics("images/pipeline")
+```
+
+The browser-based logic which enables **plotly** to [link views without shiny](#linking-views-without-shiny) is not really "pipeline" in the same sense that interactive statistical graphics software systems, like Orca and GGobi, used the term [@orca]; [@ggobi-pipeline-design]. These systems 
+-->
+
+
+# Case Studies
+
+## Exploring pedestrian counts
+
+The first example uses pedestrian counts from around the city published on the City of Melbourne's open data platform [@melbourne]. The City currently maintains at least 43 sensors (spread across the central business district), which record the number of pedestrians that walk by every hour. The analysis presented here uses counts starting in 2013 when all 42 of these sensors began recording counts, all the way through July of 2016. This code for obtaining and pre-processing this data, as well as the (cleaned-up) data is made available in the R package __pedestrians__ [@pedestrians]. The main dataset of interest is named `pedestrians` and contains nearly 1 million counts, but over 400,000 counts are missing:
+
+```{r}
+data(pedestrians, package = "pedestrians")
+summary(is.na(pedestrians$Counts))
+```
+
+### Exploring missingness
+
+Trying to visualize time series of this magnitude in its raw form simply is not useful, but we can certainly extract features and use them to guide our analysis. Figure \@ref(fig:missing) shows the number of missing values broken down by sensor. Southbank has the most missing values by a significant amount and the hand-full of stations with the fewest missing values have nearly the same number of missing values. One thing that Figure \@ref(fig:missing) can not tell us is _where_ these missing values actually occur. To investigate this question, it is helpful to link this information to the corresponding time series.
+
+```{r missing, echo = FALSE, fig.cap = "Missing values by station."}
+library(ggplot2)
+is_na <- with(pedestrians, tapply(Counts, INDEX = Name, function(x) sum(is.na(x))))
+pedestrians$Name <- factor(pedestrians$Name, names(sort(is_na)))
+ggplot(pedestrians, aes(Name, fill = is.na(Counts))) + 
+  geom_bar() + coord_flip() + labs(x = NULL, y = NULL) +
+  scale_fill_discrete("Is missing")
+```
+
+Again, visualizing the entire time series all at once is not realistic, but we can still gain an understanding of the relationship between missingness and time via down-sampling techniques. Figure \@ref(fig:missing-by-time) displays an interactive version of Figure \@ref(fig:missing) linked to a down-sampled (stratified within sensor location) time series. Clicking on a particular bar reveals the sampled time series for that sensor location. The top one-third of all sensors are relatively new sensors, the middle third generally encounter long periods of down-time, while the bottom third seem to have very little to no pattern in their missingness.
+
+<!-- TODO: break down by hour of day? -->
+
+```{r, missing-by-time, echo = FALSE, fig.cap = "An interactive bar chart of the number of missing counts by station linked to a sampled time series of counts. See [here](https://vimeo.com/189035350) for the corresponding video and [here](http://cpsievert.github.io/pedestrians/missing-by-time/) for the interactive figure."}
+knitr::include_graphics("images/pedestrians-missing")
+```
+
+### Exploring trend and seasonality
+
+A time series $Y_t$ can be thought of as a linear combination of at least three components:
+
+$$Y_t = T_t + S_t + I_t, \hspace{0.4cm} t \in \{1, \dots, T \} $$
+where $T_t$ is the trend, $S_t$ is the seasonality, and $I_t$ is the "irregular" component (i.e., remainder). For the sensor data, we could imagine having multiple types of seasonality (e.g., hour, day, month, year), but as Figure \@ref(fig:missing-by-time) showed, year doesn't seem to have much effect, and as we will see later, hour of day has a significant effect (which is sensible for most traffic data), so we focus on hour of day as a seasonal component. Estimating these components has important applications in time series modeling (e.g., seasonal adjustments), but we could also leverage these estimates to produce further time series "features" to guide our graphical analysis. 
+
+There are many to go about modeling and estimating these time series components. Partly due to its widespread availability in R, the `stl()` function, which is based on LOESS smoothing, is a popular and reasonable approach [@stl]; [@RCore]. Both the __anomalous__ and __tscognostics__ R packages use estimates from `stl()`^[If no seasonal component exists, a Generalized Additive Models is used to estimate the trend component [@mgcv].] to measure the strength of trend (as $\hat{Var(T_t)}$) and strength of seasonality (as $\hat{Var(S_t)}$) [@anomalous]; [@tscognostics]. From these estimates, they produce other informative summary statistics, such as the seasonal peak ($Max_{t}(\hat{S_t})$), trough ($Min_{t}(\hat{S_t})$), spike ( $Var[(Y_t - \bar{Y})^2]$); as well as trend linearity ($\hat{\beta_1}$) and curvature ($\hat{\beta_2}$) (coefficients from a 2nd degree polynomial fit to the estimated trend $\mu = \beta_0 + \beta_1\hat{T_t} + \beta_2\hat{T_t^2}$). 
+
+Projecting each time series into the 6 dimensional space spanned by these "STL features" allows us to graphically examine the sensor activity in a reasonable number of interpretable dimensions. Touring is a graphical technique for viewing such a feature space through animation. Similar to the rendering and perception of 3D objects in computer graphics, a tour smoothly interpolates through 2D projections of numeric variables -- allowing the viewer to perceive the overall structure and identify clusters and/or outliers [@ggobi:2007]. Figure \@ref(fig:pedestrians-tour) shows a couple frames taken from a tour of random 2D projections -- also known as a grand tour [@grand-tour]. The first frame (the top row) displays a projection with large weight toward linearity, trough, curvature, and season. From this frame, it is clear that one sensor (Tin Alley, highlighted in red) is unusual -- especially along the linearity/curvature/trough dimensions. The second frame (the bottom row) displays a projection with large weight towards trend. Along this dimension, another unusual sensor appears (Bourke St). 
+
+```{r pedestrians-tour, echo = FALSE, fig.cap = "Two frames from a grand tour of measures generated from seasonal, trend, and irregular time-series components. The first frame (the top row) displays the state of the tour roughly 16 seconds into the animation while the second frame (the bottom row) is at roughly 60 seconds. A given frame displays both a 2D projection (on the left) and the linear combination of variables used for the projection (on the right). In both frames, the Tin Alley-Swanson St (West) sensor is highlighted in red -- a useful technique for tracking interesting or unusual point(s) throughout a tour."}
+knitr::include_graphics("images/pedestrians-tour.pdf")
+```
+
+In addition to highlighting observations by painting them directly on the tour, it can also be useful to link a tour to other views of the data, such as a parallel coordinates plot. In a parallel coordinates plot, each observation is represented by a line, and each line intersects numerous parallel axes (one for each measurement variable) [@Inselberg:85]; [@Wegman:90]. Figure \@ref(fig:pedestrians-tour-pcp) links the grand tour from Figure \@ref(fig:pedestrians-tour) to a parallel coordinates plot of the same data, which provides another way of performing graphical queries (via individual measurements rather than linear combinations of measurements) [@brushing-pcp]. In a later section, we leverage this "linked highlighting" technique to identify clusters, but for now, we focus on highlighting unusual sensors.
+
+```{r pedestrians-tour-pcp, echo = FALSE, fig.cap = "Identifying and comparing unusual sensors (Tin Alley and Swanson St) using linked highlighting between a grand tour and a parallel coordinates plot. The second frame of Figure \\@ref(fig:pedestrians-tour) helped to point out Bourke St as a somewhat unusual sensor with respect to trend. Highlighting that point and linking it to a parallel coordinate plot makes it easier to compare trend across sensors and compare the other measures among sensors of interest."}
+knitr::include_graphics("images/pedestrians-tour-pcp")
+```
+
+The appearance of any parallel coordinates plot is effected by at least two choices -- the ordering of the axes and the scale used to align the axes. The ordering of axes effects which relationships we end up seeing -- a $d$-dimensional dataset has $d^2 - \sum_{i=1}^d i$ relationships, but parallel coordinates can only represent $d-1$ relationships at a time. In this case, we have interpretable "groups" of variables (trend and seasonality), so Figure \@ref(fig:pedestrians-tour-pcp) uses an ordering to preserve the grouping. Furthermore, since most of the measurements are roughly normally distributed, Figure \@ref(fig:pedestrians-tour-pcp) centers and scales each variable to have mean 0 and standard deviation 1. As a result, it is really obvious that Tin Alley is really unusual with respect to curvature and linearity, but Bourke St and Tin Alley are only slightly unusual with respect to trend. 
+
+Now that we have a couple sensors of interest, it would help to link to other views that reveal more details about their sensor activity. Figure \@ref(fig:pedestrians-stl-tour) adds two more linked views to Figure \@ref(fig:pedestrians-tour-pcp), including the inter-quartile range (IQR) of counts per hour, and a sample of the raw counts. The former display is useful for gaining an understanding of the magnitude and variation in sensor activity (IQR), while the latter is useful for discover outliers or unusual patterns.^[The same sampling strategy used in Figure \@ref(fig:missing-by-time) is used to generate the dotplot (count versus hour of day).] Highlighting the different sensors with different colors in each view using a persistent brush fosters comparison and helps viewers track which graphical markers belong to which sensor. As a result, it becomes apparent that Tin Alley (in red) experiences relatively low traffic compared to Bourke St (in blue), and overall traffic (black).
+
+```{r pedestrians-stl-tour, echo = FALSE, fig.cap = "Linking views of seasonal trend decomposition summaries (first two rows) to the actual time series (last two rows). By linking raw counts and the hourly IQR, we can see that Tin Alley (in red) experiences relatively low traffic compared to Bourke St (in blue), and overall traffic (black). See [here](https://vimeo.com/192684799) for the corresponding video and [here](http://cpsievert.github.io/pedestrians/stl-tour/) for the interactive figure."}
+knitr::include_graphics("images/pedestrians-stl-tour")
+```
+
+Hundreds of comparisons and a fair amount of insight could be extracted from the interactive graphic in Figure \@ref(fig:pedestrians-stl-tour), but focusing just on the STL-based features is somewhat limiting. There are certainly other features that capture aspects of the time series that these features have missed. In theory, the mathematics and the visualization techniques behind Figure \@ref(fig:pedestrians-stl-tour) can be extended to any number of dimensions. In practice, technology and time typically limits us to tens to hundreds of dimensions. The next section incorporates more time-series features and also links this information to a geographic map so we can investigate the relationship between geographic location and certain features.
+
+### Exploring many features
+
+Figure \@ref(fig:pedestrians-cog-tour) is an extension of Figure \@ref(fig:pedestrians-stl-tour) to incorporate 10 other time series features, as well as a map of Melbourne. In this much larger feature space, Tin Alley (in red) is still an unusual sensor, but not quite as unusual as Waterfront City (in blue). Also, rather interestingly, both of these sensors are located on the outskirts of the city, relative to the other sensors. It appears Waterfront City is so noticeably unusual due to its very large value of lumpiness (defined as the variance of block variances of size 24). Inspecting the unusually high raw counts for this station reveals some insight as to why that is case -- the counts are relatively low year-round, but then spike dramatically on new years eve and on April 13th. A Google search reveals that Waterfront City is a popular place to watch fireworks. This is a nice example of how interactive graphics can help us discover and explain _why_ unusual patterns occur.
+
+```{r pedestrians-cog-tour, echo = FALSE, fig.cap = "Seventeen time series features linked to a geographic map as well as raw counts. This static image was generated using a persistent brush to compare Tin Alley-Swanson St. (in red) to Waterfront City (in blue). In addition to being unusual in the feature space, these sensors are also on the outskirts of the city. The corresponding video and interactive figure (available [here](https://vimeo.com/192710308) and [here](http://cpsievert.github.io/pedestrians/cog-tour/)) also includes a grand tour and raw counts by day of the year."}
+knitr::include_graphics("images/pedestrians-cog-tour")
+```
+
+In addition to discovering interesting details, we can use the same interactive display that generated Figure \@ref(fig:pedestrians-cog-tour) to make meaningful comparisons between groups of sensors. Figure \@ref(fig:pedestrians-cog-tour-acf) uses a persistent linked brush to compare sensors with a high first order autocorrelation ($Corr(Y_t, Y_{t-1})$), in red, against sensors with low autocorrelation, in blue. A few interesting observations can be made from this selection state. 
+
+```{r pedestrians-cog-tour-acf, echo = FALSE, fig.cap = "Sensors with high first order autocorrelation (in red) versus sensors with low autocorrelation (in blue). See [here](https://vimeo.com/189187319) for the corresponding video and [here](http://cpsievert.github.io/pedestrians/cog-tour/) for the interactive figure."}
+knitr::include_graphics("images/pedestrians-cog-tour-acf")
+```
+
+The most striking relationship with respect to autocorrelation in Figure \@ref(fig:pedestrians-cog-tour-acf) is in the geographic locations. Sensors with high autocorrelation (red) appear along Swanson St. -- the heart of the central business district in Melbourne. These stations experience a fairly steady flow of traffic throughout the day since both tourists and people going to/from work use nearby trains/trams to get from place to place. On the other hand, sensors with a low autocorrelation^[It should be noted that the (raw) autocorrelation is positive for each station with a minimum of 0.66, median of 0.83, and max of 0.94.] see the bulk of their traffic at the start and end of the work day. It seems that this feature alone would provide a fairly good criteria for splitting these sensors into 2 groups, which we could verify and study further via hierarchical clustering.  
+
+<!--
+It is also apparent that autocorrelation has a strong negative correlation with spectral entropy (i.e., high autocorrelation is related with low entropy).  
+-->
+
+Figure \@ref(fig:pedestrians-dendro) links a dendrogram of a hierarchical cluster analysis (using the complete linkage method via the `hclust()` function in R) to other views of the data. A persistent brush selects all the sensors under a given node -- effectively providing a tool to choose a number of clusters and visualize model results in the data space (in real-time). Splitting the dendrogram at the root node splits the sensors into 2 groups (red and green) which confirms prior suspicions -- sensors on Swanson St (high autocorrelation) are most different from sensors on the outskirts of the city (low autocorrelation). Increasing the number of clusters to 3-4 splits off the unusual sensors that we identified in our previous observations (Waterfront City, Birrarung Marr, and Tin Alley-Swanson St).
+
+```{r pedestrians-dendro, echo = FALSE, fig.cap = "Linking a dendrogram of hierarchical clustering results to multiple views of the raw data. See [here](https://vimeo.com/189670650) for the corresponding video and [here](http://cpsievert.github.io/pedestrians/tour-dendro/) for the interactive figure."}
+knitr::include_graphics("images/pedestrians-dendro")
+```
+
+This case study on pedestrian counts uses interactive graphic techniques for numerous data analysis tasks. In fact, Figure \@ref(fig:pedestrians-cog-tour) alone provides at least one example of each task outlined by @Cook:2007uk: finding Gestalt, posing queries, and making comparisons. Furthermore, as Figure \@ref(fig:pedestrians-cog-tour) shows, and @model-vis-paper writes, these same interactive techniques can also be a helpful for understanding, inspecting, and diagnosing statistics models. The next case study on Zika virus infections demonstrates how interactive graphics can be useful for tracking disease outbreak and detecting data quality issues.
+
+## Tracking disease outbreak
+
+The next case study investigates Zika disease outbreaks across North, Central, and South America. The data was obtained from a publically available repository that curates data from numerous public reports across numerous countries and regions [@zika-data]. Of course, each country has a different reporting method, so reported cases can and do fall under many different categories. Thankfully, @zika-data have done the tedious work of standardizing these codes so we can combine all of these reports into a single dataset. In some countries, reports are broken down to by different demographics, and include reports of similar diseases such as Flavi virus and GBS, but this analysis focuses specifically on suspected/confirmed Zika cases at the location level. 
+
+The R package __zikar__ bundles suspected/confirmed Zika cases at the location level and provides specially designed tools for visualizing it [@zikar]. All the graphics in this section were generated via the `explore()` function from __zikar__, which invokes a __shiny__ app with linked interactive graphics [@shiny].^[A hosted version of this web application is avaliable [here](http://104.131.111.111:3838/zikar/).] Figure \@ref(fig:zikar) displays the default view of the web application, which provides a concise overview of the reported counts. The map on the left-hand side shows the different reporting locations. The non-black markers represent multiple locations, and hovering over a marker reveals the entire region that the marker represents. From this, we can see that the bulk of reporting locations are in the northern part of South America and the southern part of Central America. The right hand side of Figure \@ref(fig:zikar) shows the overall density of weekly cases (on a log scale) as well as the weekly median over time. 
+
+```{r zikar, echo = FALSE, fig.cap = "Multiple views of the Zika outbreak data. On the left-hand side is a map of the reporting locations. On the right is the overall density of suspected/confirmed cases reported per week (on a log scale), and the overall weekly median over time."}
+knitr::include_graphics("images/zikar")
+```
+
+Zooming and panning to a particular region on the interactive map reveals more information conditioned on the bounding box of the map. Figure \@ref(fig:zikar-zoom) displays information specific to the Dominican Republic. In the map itself, the "marker clusters" have updated for a more granular view of the number of locations reporting within the area. In the other views, statistics conditional upon this region (in red) are overlaid against overall statistics (in black) for fast and easy comparison(s). Figure \@ref(fig:zikar-zoom) shows the density of suspected cases in the Dominican is much higher than the overall density, and the density for confirmed cases has a much larger amount of variation. Furthermore, the weekly median within this region is consistently higher from March 2016 to July 2016. 
+
+```{r zikar-zoom, echo = FALSE, fig.cap = "A comparison of the overall cases (in black) to the cases conditional on the map bounds (in red). Zooming and panning the interactive map dynamically updates the density estimates and median number of incidents."}
+knitr::include_graphics("images/zikar-zoom")
+```
+
+Figure \@ref(fig:zikar) helps to point out an issue with the data -- in some weeks, the median number of all reported cases is negative. Using the zooming and panning capabilities of Figure \@ref(fig:zikar), one may quickly find a sub-region of the map that reflects the same overall issue, which helps to guide an investigation into why this issue exists. Figure \@ref(fig:zikar-nicaragua) uses this functionality to find that both El Salvador and Nicaragua report negative counts, at different times of the year. Considering that these countries report a cumulative count of currently infected people, these negative non-cumulative counts indicate mis-diagnosis or death. Since deaths caused by Zika in adults are quite rare, and symptoms from the Zika virus are hard to differentiate from the more common Dengue virus (another disease spread via infected mosquitoes), mis-diagnosis seems to be the more likely reason for the negative counts [@zika-nyt].
+
+```{r zikar-nicaragua, echo = FALSE, fig.cap = "Zooming and panning to a region of the map that has a negative median of overall cases (Nicaragua). A video of the zooming and panning may be viewed [here](https://vimeo.com/190610577)."}
+knitr::include_graphics("images/zikar-nicaragua")
+```
+
+As it turns out, Nicaragua and El Salvador are not the only countries that have reported a lower cumulative count from one week to the next. Figure \@ref(fig:zikar-cumulative) shows cumulative confirmed (in red) and suspected (in blue) counts by location within 9 different countries. Argentina is another country that has clearly encountered mis-diagnosis issues -- there is a consistent dip in counts across all locations within the country on two particular dates in May 2016. Although Figure \@ref(fig:zikar-cumulative) covers almost all the countries in this data, it only covers ~5% of all reporting locations. Colombia alone accounts for ~95% of all locations found in this data and has some unique reporting issues of its own.
+
+```{r zikar-cumulative, echo = FALSE, fig.cap = "Cumulative confirmed (in red) and suspected (in blue) counts by location within 9 different countries."}
+knitr::include_graphics("images/zikar-cumulative")
+```
+
+Figure \@ref(fig:zikar-colombia) shows the cumulative number of confirmed (in red) and suspected (in blue) cases for every reporting location in Colombia. From the static version of Figure \@ref(fig:zikar-colombia), it seems plausible that every location re-classified all confirmed cases to suspected around mid-March. By clicking on a particular line (shown in the video of Figure \@ref(fig:zikar-colombia)) to highlight the confirmed/suspected counts for a particular location, it becomes even more obvious that every Colombian location simply changed all their cases from confirmed to suspected.
+
+```{r zikar-colombia, echo = FALSE, fig.cap = "Highlighting cumulative confirmed (in red) and suspected (in blue) counts by location within Colombia to verify re-classifications from confirmed to suspected. A video of the interactive highlighting may be viewed [here](https://vimeo.com/190736801)."}
+knitr::include_graphics("images/zikar-colombia.gif")
+```
+
+This case study shows how interactive graphics can be useful to discover issues in data that should be addressed before any statistical modeling occurs. For this reason, they are particularly useful for analysts coming at the problem with a lack of domain expertise, and can provide insight helpful for downstream analysis. The next case study uses interactive graphics to explore Australian election data and provides a nice example of combining numerous data sources into a single dashboard of linked views.
+
+## Exploring Australian election data
+
+The next case study takes a look at the relationship between demographics and voting behavior in the 2013 Australian general election. Demographic information was obtained from the Australian Bureau of Statistics (ABS)^[Downloaded from <https://www.censusdata.abs.gov.au/datapacks/>], voting information was obtained from the Australian Electoral Commission (AEC)^[Downloaded from <http://www.aec.gov.au/elections/federal_elections/2013/downloads.htm>], and all the data as well as the interactive graphics presented here are available via the R package __eechidna__ [@eechidna]. Thankfully, these data sources can be linked via electoral boundaries from the 2013 election (and the geo-spatial boundaries are also available^[<http://www.aec.gov.au/Electorates/gis/gis_datadownload.htm>]), making it possible to explore the relationship between voting behavior and demographics across electorates.
+
+Figure \@ref(fig:eechidna-2p) shows demographics of electorates that elected candidates (for the House of Representatives in the 2013 general election) from the Liberal Party in green, the Australian Labor Party in orange, and all other parties in black. As shown in [this video](https://vimeo.com/191553616), Figure \@ref(fig:eechidna-2p) was generated via the `launchApp()` function from **eechidna**, which invokes an interactive visualization where electorates may be graphically queried according to voting outcomes, geography, and/or demographics. To foster comparisons, density estimates for all the 32 different demographics are displayed by default, but the number of demographics may also be restricted when invoking `launchApp()`. 
+
+```{r eechidna-2p, echo = FALSE, fig.cap = "Electorate demographics among the Liberal Party (in green), the Australian Labor Party (in orange), and other parties (in black). The vertical lines represent the mean value within each group. The interactive application used to generate this image may be accessed [here](http://104.131.111.111:3838/eechidna/) and a video of the interactive highlighting may be viewed [here](https://vimeo.com/191553616)."}
+knitr::include_graphics("images/eechidna-2p.pdf")
+```
+
+The density estimates in the lower portion of Figure \@ref(fig:eechidna-2p) suggest that Labor electorates tend to be younger (in particular, they have a higher percentage of 20-34 year olds, and lower percentage of 55-64), are more unemployed, have lower income, and are more populated. Most of these characteristics are not surprising given the ideologies of each party; however, it is surprising to see a relationship between the population within electorate and the elected party. In theory, electorates should be divided roughly equally with respect to population so that a single vote in one electorate counts as much as a vote in another electorate. However, in practice, there has to be some variation in population; and as it turns out, more populated electorates tend to vote Labor, implying that (on average) a vote towards the Labor party counts less than a vote for the Liberal party.
+
+Figure \@ref(fig:eechidna-2p) was created by painting the relevant bars in the upper-left hand panel of Figure \@ref(fig:eechidna-2p-2). Note that, due to the similarities of the parties, both the Liberal National Party of Queensland (LNP) and the Liberal Party are grouped into a single liberal party (colored in green).  The interaction with the bar chart not only populates relevant density estimates, as in Figure \@ref(fig:eechidna-2p), but it also colors every graphical mark representing the corresponding electorates in the other views shown in Figure \@ref(fig:eechidna-2p-2). 
+
+The line chart in the upper-right hand panel of Figure \@ref(fig:eechidna-2p-2) shows the proportion of 1st preference votes for each party within a given electorate -- showing an expected difference between ALP/LP/LNP voting as well as other interesting patterns (e.g. liberal party electorates tend to have a higher proportion of 1st preference votes going to the PUP party). The left-hand panel of Figure \@ref(fig:eechidna-2p-2) displays the absolute difference in vote totals within electorates, making it easy to identify closely contested electorates (more on this later). The right-hand panel of Figure \@ref(fig:eechidna-2p-2) displays a map of Australia with polygons outlining the electorate boundaries. Since the boundaries within highly populated areas (e.g., Melbourne, Sydney, and Brisbane) are so small, the location of points (on top of the map) were adjusted by a force layout algorithm in order to avoid too much overplotting.
+
+```{r eechidna-2p-2, echo = FALSE, fig.cap = "Comparing voting outcomes and geographic location among the Liberal Party (in green), the Australian Labor Party (in orange), and other parties (in black). The bar chart in the upper-left hand panel shows the number of electorates won by each party. The upper-right hand panel shows the proportion of 1st preference votes for each party for given electorate. The lower-left hand panel shows the absolute difference in vote totals for each electorate. The lower-right hand panel show the locations of electorates."}
+knitr::include_graphics("images/eechidna-2p-2.pdf")
+```
+
+Although interaction with the bar chart in Figure \@ref(fig:eechidna-2p-2) helped to generate Figures \@ref(fig:eechidna-2p) and \@ref(fig:eechidna-2p-2), electorates may be queried via directly manipulation with any of these plots. For example, Figure \@ref(fig:eechidna-diff) was generated by brushing the electorates that were determined by less than 10% of the vote total (via the plot with the absolute difference in vote totals).
+
+```{r eechidna-diff, echo = FALSE, fig.cap = "Electorates that were determined by less than 10 percent of the total vote. These electorates tend to have voters that are younger, less religious, are less likely to own property, and lean towards the Labor party."}
+knitr::include_graphics("images/eechidna-diff.pdf")
+```
+
+Figure \@ref(fig:eechidna-diff) highlights closely contested electorates (determined by less than 10% of the vote total) which provides insight into the demographics of voters that future political campaigns should target in order to maximize their campaigning efforts. Voters in these competitive areas tend to have a high proportion of 25-34 year olds, have more diverse religious backgrounds, are less likely to own property, and a higher percentage of the population are Indigenous. Unsurprisingly, these electorates lean towards the Labor party, but there are a few electorates within this group that have a surprising population (around the minimum of 100,000 people). Figure \@ref(fig:eechidna-diff2) paints electorates with a population around the minimum orange, which reveals a striking geographic relationship among these electorates -- almost all of them are in Tasmania (with the exception of one in the Northern Territory). Furthermore, as \@ref(fig:eechidna-diff2) shows, all of these electorates (except for Denison), experienced a close election, so campaign efforts would be well spent in these electorates.
+
+```{r eechidna-diff2, echo = FALSE, fig.cap = "Electorates that experienced a close election as well as electorates with small populations (in orange)."}
+knitr::include_graphics("images/eechidna-diff2.gif")
+```
+
+# Conclusion
+
+Interactive graphics, particularly multiple linked plots with support for direct manipulation, provide a powerful data analysis tool for posing queries and making comparisons. This paper gives three different case studies applying interactive web graphics to real-world data sets to extract insights and present the graphics themselves in an accessible and convenient format. Furthermore, these graphical techniques can be widely useful not only for the analyst conducting exploratory data analysis, but also for understanding and diagnosing statistical models, and presenting results to a wider audience. 
+
+Interactive web graphics are already widely used for presenting and communicating results of an analysis (where the visualization type is already known), but are less often used for exploring data -- mostly due to a lack of tools for iteration within a larger statistical computing environment. The __plotly__ package aims to address this lack of tools by enabling R users to produce highly interactive and dynamic web graphics by leveraging already well-known and widely used interfaces for exploratory data analysis. In particular, the __plotly__ package makes it easy to translate __ggplot2__ graphics^[Some recent estimates suggest that 100,000s of people use __ggplot2__, a graphing interface which is especially well suited for creating exploratory graphics.] to a web-based version, and enable interactive techniques such as highlighting and linked brushing [@ggplot2].
+
+All of the examples in the [exploring pedestrian counts](#exploring-pedestrian-counts) section were created with __plotly__ and are available as standalone HTML files that can be easily deployed and shared with well-established web technologies. The sections [tracking disease outbreak](#tracking-disease-outbreak) and [exploring Australian election data](#exploring-australian-election-data) link __plotly__ graphs using the __shiny__ package for authoring web applications to enable linked interactions that compute statistical summaries based on graphical queries defined by users. Furthermore, all of the examples across all of these sections were created purely within R, and requires no knowledge of web technologies such as HTML/JavaScript/CSS from the user. As a result, projects such as __plotly__ and __shiny__ help analysts focus on their primary task (data analysis) rather than the implementation details typically involved when creating interactive web graphics.
+
+# Acknowledgements
+
+Thank you to the organizers (Nicholas Tierney, Miles McBain, Jessie Roberts) of the rOpenSci hackathon as well as my group members (Heike Hofmann, Di Cook, Rob Hyndman, Ben Marwick, Earo Wang) where the __eechidna__ package first took flight. Thank you to Di Cook and Earo Wang for sparking my interest in the pedestrians data, helping to implement the __pedestrians__ R package, and many fruitful discussions (some with Heike Hofmann and Rob Hyndman). 
+
+\chapter{PLOTLY FOR R}
+
+I am sole author of this chapter which explains and partially documents the R package **plotly**. Since interactive and dynamic graphics are not allowed on the University's publishing platform, I highly suggest viewing the web-based version of this chapter -- <https://cpsievert.github.io/plotly_book/>
+
+Toby Dylan Hocking was the original author of the **plotly** package, but when I became maintainer and [project lead](https://github.com/ropensci/plotly/graphs/contributors?from=2015-01-12&to=2016-11-28&type=c), the package has a evolved from a fairly basic **ggplot2** converter to a more general graphing library with rich support for [linking](#multiple-linked-views) and [animating](#animating-views) views.
