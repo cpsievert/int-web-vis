@@ -5,9 +5,10 @@ documentclass: article
 fontsize: 12pt
 geometry: margin=1in
 linkcolor: cyan
+citecolor: black
 bibliography: references.bib
-abstract: Some summary
-keywords: uno, dos, tres
+abstract: Interactive graphics are a powerful tool for exploring high-dimensional data. In particular, visualization systems with strong support for focusing, arranging, and manipulating multiple linked views help analysts pose graphical queries, make comparisons, discover high-dimensional structure, and diagnose many models in real time. This paper demonstrates the potential of modern web-based technologies for interactive data visualization using three case studies. Furthermore, all the visualizations used for the analysis were created via the R package plotly -- so other analysts may leverage these (or similar) interactive techniques without any knowledge of web technologies (e.g., HTML, JavaScript, CSS, etc).
+keywords: interactive graphics, exploratory data analysis, R, shiny, plotly
 ---
 
 # Introduction
