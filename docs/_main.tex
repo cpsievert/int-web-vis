@@ -27,16 +27,13 @@
 \hypersetup{unicode=true,
             pdftitle={Interactive data visualization on the web using R},
             pdfauthor={Carson Sievert},
-            pdfkeywords={uno, dos, tres},
+            pdfkeywords={interactive graphics, exploratory data analysis, R, shiny, plotly},
             colorlinks=true,
             linkcolor=cyan,
-            citecolor=Blue,
+            citecolor=black,
             urlcolor=Blue,
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
-\usepackage{biblatex}
-
-\addbibresource{references.bib}
 \usepackage{color}
 \usepackage{fancyvrb}
 \newcommand{\VerbBar}{|}
@@ -46,37 +43,37 @@
 \usepackage{framed}
 \definecolor{shadecolor}{RGB}{248,248,248}
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{{#1}}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
-\newcommand{\ImportTok}[1]{{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{{#1}}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{{#1}}}}
-\newcommand{\BuiltInTok}[1]{{#1}}
-\newcommand{\ExtensionTok}[1]{{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{{#1}}}
-\newcommand{\RegionMarkerTok}[1]{{#1}}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{{#1}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{{#1}}}}
-\newcommand{\NormalTok}[1]{{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
 \usepackage{longtable,booktabs}
 \usepackage{graphicx,grffile}
 \makeatletter
@@ -111,25 +108,9 @@
 \let\rmarkdownfootnote\footnote%
 \def\footnote{\protect\rmarkdownfootnote}
 
-%%% Change title format to be more compact
-\usepackage{titling}
-
-% Create subtitle command for use in maketitle
-\newcommand{\subtitle}[1]{
-  \posttitle{
-    \begin{center}\large#1\end{center}
-    }
-}
-
-\setlength{\droptitle}{-2em}
-  \title{Interactive data visualization on the web using R}
-  \pretitle{\vspace{\droptitle}\centering\huge}
-  \posttitle{\par}
-  \author{Carson Sievert}
-  \preauthor{\centering\large\emph}
-  \postauthor{\par}
-  \date{}
-  \predate{}\postdate{}
+% ------------------------------------------------------------------------------
+% Start of JCGS specific titlepage
+% ------------------------------------------------------------------------------
 
 
 \usepackage{amsthm}
@@ -144,14 +125,44 @@
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
 \begin{document}
+
+\def\spacingset#1{\renewcommand{\baselinestretch}%
+{#1}\small\normalsize} \spacingset{1}
+
+\title{\bf Interactive data visualization on the web using R}
+\author{Carson Sievert \\ Department of Statistics, Iowa State University}
 \maketitle
+
+\bigskip
 \begin{abstract}
-Some summary
+% 200 or fewer words
+Interactive graphics are a powerful tool for exploring high-dimensional
+data. In particular, visualization systems with strong support for
+focusing, arranging, and manipulating multiple linked views help
+analysts pose graphical queries, make comparisons, discover
+high-dimensional structure, and diagnose many models in real time. This
+paper demonstrates the potential of modern web-based technologies for
+interactive data visualization using three case studies. Furthermore,
+all the visualizations used for the analysis were created via the R
+package plotly -- so other analysts may leverage these (or similar)
+interactive techniques without any knowledge of web technologies (e.g.,
+HTML, JavaScript, CSS, etc).
 \end{abstract}
+
+\noindent
+{\it Keywords:}  interactive graphics, exploratory data analysis, R, shiny, plotly
+\vfill
+
+\newpage
+\spacingset{1.45} % DON'T change the spacing!
+
+% ------------------------------------------------------------------------------
+% End of JCGS specific titlepage
+% ------------------------------------------------------------------------------
 
 \section{Introduction}\label{introduction}
 
-\textcite{Cook:2007uk} proposed a taxonomy of interactive data
+Cook, Buja, and Swayne (1996) proposed a taxonomy of interactive data
 visualization based on three fundamental data analysis tasks: finding
 Gestalt, posing queries, and making comparisons. The top-level of the
 taxonomy comes in two parts: \emph{rendering}, or what to show on a
@@ -162,9 +173,9 @@ views. Of course, each of the three manipulation branches include a set
 of techniques for accomplishing a specific task (e.g., within focusing
 views: controlling aspect ratio, zoom, pan, etc), and they provide a
 series of examples demonstrating techniques using the XGobi software
-toolkit \autocite{xgobi}. This paper applies similar interactive
-techniques to analyze data from three different sources using
-interactive web graphics.
+toolkit (Swayne, Cook, and Buja 1998). This paper applies similar
+interactive techniques to analyze data from three different sources
+using interactive web graphics.
 
 Traditionally, interactive graphics software toolkits are available as
 desktop applications, but more recently, toolkits have used a web-based
@@ -174,30 +185,30 @@ views between different interactive graphics toolkits. This ability
 grants a tremendous amount of power to the analyst since they may
 combine the strengths of several systems at once. However,
 unfortunately, there has been a surprising lack of work done on enabling
-graphical queries between multiple views (like the work done by
-\textcite{Buja:1991vh}; \textcite{MANET}; \textcite{Cook:2007uk};
-\textcite{ggobi:2007}, but in a web-based environment).
+graphical queries between multiple views (like the work done by Buja et
+al. (1991); Unwin A. (1996); Cook, Buja, and Swayne (1996); Cook and
+Swayne (2007), but in a web-based environment).
 
 For a number of years, R users have been able to link arbitrary views
 via the \textbf{shiny} package -- a reactive programming framework for
-authoring web applications entirely within R \autocite{shiny}. Although
-\textbf{shiny} is a powerful tool for prototyping, it may introduce
-unnecessary computational complexity, and lacks semantics for performing
-graphical queries on web-based graphics. As a result, when linking views
-in a \textbf{shiny} app, one typically has to resort to a naive updating
-rule -- when a query is made, the entire image/graph has to be redrawn.
-By adding semantics for graphical queries, it allows the underlying
-graphing libraries to be more intelligent about updating rules which
-generally leads to a more responsive graphical query.
+authoring web applications entirely within R (Chang et al. 2015).
+Although \textbf{shiny} is a powerful tool for prototyping, it may
+introduce unnecessary computational complexity, and lacks semantics for
+performing graphical queries on web-based graphics. As a result, when
+linking views in a \textbf{shiny} app, one typically has to resort to a
+naive updating rule -- when a query is made, the entire image/graph has
+to be redrawn. By adding semantics for graphical queries, it allows the
+underlying graphing libraries to be more intelligent about updating
+rules which generally leads to a more responsive graphical query.
 
 The R package \textbf{plotly} is one such project that has semantics for
-linking views with and without \textbf{shiny} \autocite{plotly};
-\autocite{plotly-book}. All of the examples in the
+linking views with and without \textbf{shiny} (Sievert et al. 2016);
+(Sievert 2016b). All of the examples in the
 \protect\hyperlink{exploring-pedestrian-counts}{exploring pedestrian
 counts} section are available as standalone HTML files (i.e., without
 \textbf{shiny}) and were created entirely within R via \textbf{plotly}
 and \textbf{leaflet} (a package for creating interactive web-based maps)
-\autocite{leaflet}. There are, of course, limitations to the types of
+(Cheng and Xie 2015). There are, of course, limitations to the types of
 links one may create without \textbf{shiny}, and some of the examples in
 \protect\hyperlink{Tracking-disease-outbreak}{tracking disease outbreak}
 and \protect\hyperlink{exploring-australian-election-data}{exploring
@@ -211,27 +222,27 @@ response to user events.
 pedestrian counts}\label{exploring-pedestrian-counts}}
 
 The first example uses pedestrian counts from around the city published
-on the City of Melbourne's open data platform \autocite{melbourne}. The
-City currently maintains at least 43 sensors (spread across the central
+on the City of Melbourne's open data platform (Melbourne 2016). The City
+currently maintains at least 43 sensors (spread across the central
 business district), which record the number of pedestrians that walk by
 every hour. The analysis presented here uses counts starting in 2013
 when all 42 of these sensors began recording counts, all the way through
 July of 2016. This code for obtaining and pre-processing this data, as
 well as the (cleaned-up) data is made available in the R package
-\textbf{pedestrians} \autocite{pedestrians}. The main dataset of
-interest is named \texttt{pedestrians} and contains nearly 1 million
-counts, but over 400,000 counts are missing:
+\textbf{pedestrians} (Sievert 2016a). The main dataset of interest is
+named \texttt{pedestrians} and contains nearly 1 million counts, but
+over 400,000 counts are missing:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{data}\NormalTok{(pedestrians, }\DataTypeTok{package =} \StringTok{"pedestrians"}\NormalTok{)}
-\KeywordTok{summary}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(pedestrians$Counts))}
+\KeywordTok{summary}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(pedestrians}\OperatorTok{$}\NormalTok{Counts))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-##    Mode   FALSE    TRUE    NA's 
-## logical  942624  407189       0
+##    Mode   FALSE    TRUE 
+## logical  942624  407189
 \end{verbatim}
 
 \subsubsection{Exploring missingness}\label{exploring-missingness}
@@ -295,13 +306,13 @@ analysis.
 There are many to go about modeling and estimating these time series
 components. Partly due to its widespread availability in R, the
 \texttt{stl()} function, which is based on LOESS smoothing, is a popular
-and reasonable approach \autocite{stl}; \autocite{RCore}. Both the
-\textbf{anomalous} and \textbf{tscognostics} R packages use estimates
-from \texttt{stl()}\footnote{If no seasonal component exists, a
-  Generalized Additive Models is used to estimate the trend component
-  \autocite{mgcv}.} to measure the strength of trend (as
+and reasonable approach (R. B. Cleveland and Terpenning 1990); (R Core
+Team 2016). Both the \textbf{anomalous} and \textbf{tscognostics} R
+packages use estimates from \texttt{stl()}\footnote{If no seasonal
+  component exists, a Generalized Additive Models is used to estimate
+  the trend component (Wood 2006).} to measure the strength of trend (as
 \(\hat{Var(T_t)}\)) and strength of seasonality (as \(\hat{Var(S_t)}\))
-\autocite{anomalous}; \autocite{tscognostics}. From these estimates,
+(Hyndman, Wang, and Laptev 2016); (Wang 2016). From these estimates,
 they produce other informative summary statistics, such as the seasonal
 peak (\(Max_{t}(\hat{S_t})\)), trough (\(Min_{t}(\hat{S_t})\)), spike (
 \(Var[(Y_t - \bar{Y})^2]\)); as well as trend linearity
@@ -316,16 +327,16 @@ a graphical technique for viewing such a feature space through
 animation. Similar to the rendering and perception of 3D objects in
 computer graphics, a tour smoothly interpolates through 2D projections
 of numeric variables -- allowing the viewer to perceive the overall
-structure and identify clusters and/or outliers \autocite{ggobi:2007}.
+structure and identify clusters and/or outliers (Cook and Swayne 2007).
 Figure \ref{fig:pedestrians-tour} shows a couple frames taken from a
-tour of random 2D projections -- also known as a grand tour
-\autocite{grand-tour}. The first frame (the top row) displays a
-projection with large weight toward linearity, trough, curvature, and
-season. From this frame, it is clear that one sensor (Tin Alley,
-highlighted in red) is unusual -- especially along the
-linearity/curvature/trough dimensions. The second frame (the bottom row)
-displays a projection with large weight towards trend. Along this
-dimension, another unusual sensor appears (Bourke St).
+tour of random 2D projections -- also known as a grand tour (Asimov
+1985). The first frame (the top row) displays a projection with large
+weight toward linearity, trough, curvature, and season. From this frame,
+it is clear that one sensor (Tin Alley, highlighted in red) is unusual
+-- especially along the linearity/curvature/trough dimensions. The
+second frame (the bottom row) displays a projection with large weight
+towards trend. Along this dimension, another unusual sensor appears
+(Bourke St).
 
 \begin{figure}
 \centering
@@ -346,14 +357,13 @@ the tour, it can also be useful to link a tour to other views of the
 data, such as a parallel coordinates plot. In a parallel coordinates
 plot, each observation is represented by a line, and each line
 intersects numerous parallel axes (one for each measurement variable)
-\autocite{Inselberg:85}; \autocite{Wegman:90}. Figure
-\ref{fig:pedestrians-tour-pcp} links the grand tour from Figure
-\ref{fig:pedestrians-tour} to a parallel coordinates plot of the same
-data, which provides another way of performing graphical queries (via
-individual measurements rather than linear combinations of measurements)
-\autocite{brushing-pcp}. In a later section, we leverage this ``linked
-highlighting'' technique to identify clusters, but for now, we focus on
-highlighting unusual sensors.
+(Inselberg 1985); (Wegman 1990). Figure \ref{fig:pedestrians-tour-pcp}
+links the grand tour from Figure \ref{fig:pedestrians-tour} to a
+parallel coordinates plot of the same data, which provides another way
+of performing graphical queries (via individual measurements rather than
+linear combinations of measurements) (Carr 1996). In a later section, we
+leverage this ``linked highlighting'' technique to identify clusters,
+but for now, we focus on highlighting unusual sensors.
 
 \begin{figure}
 \centering
@@ -518,12 +528,12 @@ interactive figure.}
 This case study on pedestrian counts uses interactive graphic techniques
 for numerous data analysis tasks. In fact, Figure
 \ref{fig:pedestrians-cog-tour} alone provides at least one example of
-each task outlined by \textcite{Cook:2007uk}: finding Gestalt, posing
-queries, and making comparisons. Furthermore, as Figure
-\ref{fig:pedestrians-cog-tour} shows, and \textcite{model-vis-paper}
-writes, these same interactive techniques can also be a helpful for
-understanding, inspecting, and diagnosing statistics models. The next
-case study on Zika virus infections demonstrates how interactive
+each task outlined by Cook, Buja, and Swayne (1996): finding Gestalt,
+posing queries, and making comparisons. Furthermore, as Figure
+\ref{fig:pedestrians-cog-tour} shows, and Wickham, Cook, and Hofmann
+(2015) writes, these same interactive techniques can also be a helpful
+for understanding, inspecting, and diagnosing statistics models. The
+next case study on Zika virus infections demonstrates how interactive
 graphics can be useful for tracking disease outbreak and detecting data
 quality issues.
 
@@ -533,23 +543,23 @@ outbreak}\label{tracking-disease-outbreak}}
 The next case study investigates Zika disease outbreaks across North,
 Central, and South America. The data was obtained from a publically
 available repository that curates data from numerous public reports
-across numerous countries and regions \autocite{zika-data}. Of course,
-each country has a different reporting method, so reported cases can and
-do fall under many different categories. Thankfully,
-\textcite{zika-data} have done the tedious work of standardizing these
-codes so we can combine all of these reports into a single dataset. In
-some countries, reports are broken down to by different demographics,
-and include reports of similar diseases such as Flavi virus and GBS, but
+across numerous countries and regions (Rodriguez et al. 2016). Of
+course, each country has a different reporting method, so reported cases
+can and do fall under many different categories. Thankfully, Rodriguez
+et al. (2016) have done the tedious work of standardizing these codes so
+we can combine all of these reports into a single dataset. In some
+countries, reports are broken down to by different demographics, and
+include reports of similar diseases such as Flavi virus and GBS, but
 this analysis focuses specifically on suspected/confirmed Zika cases at
 the location level.
 
 The R package \textbf{zikar} bundles suspected/confirmed Zika cases at
 the location level and provides specially designed tools for visualizing
-it \autocite{zikar}. All the graphics in this section were generated via
+it (Sievert 2016c). All the graphics in this section were generated via
 the \texttt{explore()} function from \textbf{zikar}, which invokes a
-\textbf{shiny} app with linked interactive graphics
-\autocite{shiny}.\footnote{A hosted version of this web application is
-  avaliable \href{http://104.131.111.111:3838/zikar/}{here}.} Figure
+\textbf{shiny} app with linked interactive graphics (Chang et al.
+2015).\footnote{A hosted version of this web application is avaliable
+  \href{http://104.131.111.111:3838/zikar/}{here}.} Figure
 \ref{fig:zikar} displays the default view of the web application, which
 provides a concise overview of the reported counts. The map on the
 left-hand side shows the different reporting locations. The non-black
@@ -604,7 +614,7 @@ indicate mis-diagnosis or death. Since deaths caused by Zika in adults
 are quite rare, and symptoms from the Zika virus are hard to
 differentiate from the more common Dengue virus (another disease spread
 via infected mosquitoes), mis-diagnosis seems to be the more likely
-reason for the negative counts \autocite{zika-nyt}.
+reason for the negative counts (McNeil and Victor 2016).
 
 \begin{figure}
 \centering
@@ -675,7 +685,7 @@ information was obtained from the Australian Electoral Commission
 (AEC)\footnote{Downloaded from
   \url{http://www.aec.gov.au/elections/federal_elections/2013/downloads.htm}},
 and all the data as well as the interactive graphics presented here are
-available via the R package \textbf{eechidna} \autocite{eechidna}.
+available via the R package \textbf{eechidna} (Cook et al. 2016).
 Thankfully, these data sources can be linked via electoral boundaries
 from the 2013 election (and the geo-spatial boundaries are also
 available\footnote{\url{http://www.aec.gov.au/Electorates/gis/gis_datadownload.htm}}),
@@ -825,7 +835,7 @@ makes it easy to translate \textbf{ggplot2} graphics\footnote{Some
   recent estimates suggest that 100,000s of people use \textbf{ggplot2},
   a graphing interface which is especially well suited for creating
   exploratory graphics.} to a web-based version, and enable interactive
-techniques such as highlighting and linked brushing \autocite{ggplot2}.
+techniques such as highlighting and linked brushing (Wickham 2009).
 
 All of the examples in the
 \protect\hyperlink{exploring-pedestrian-counts}{exploring pedestrian
@@ -845,7 +855,136 @@ analysts focus on their primary task (data analysis) rather than the
 implementation details typically involved when creating interactive web
 graphics.
 
-\printbibliography
+\section*{References}
+
+\hypertarget{refs}{}
+\hypertarget{ref-grand-tour}{}
+Asimov, Daniel. 1985. ``The Grand Tour: A Tool for Viewing
+Multidimensional Data.'' \emph{SIAM J. Sci. Stat. Comput.} 6 (1).
+Philadelphia, PA, USA: Society for Industrial; Applied Mathematics:
+128--43. doi:\href{https://doi.org/10.1137/0906011}{10.1137/0906011}.
+
+\hypertarget{ref-Buja:1991vh}{}
+Buja, Andreas, John Alan McDonald, John Michalak, and Werner Stuetzle.
+1991. ``Interactive data visualization using focusing and linking.''
+\emph{IEEE Proceedings of Visualization}, February, 1--8.
+
+\hypertarget{ref-brushing-pcp}{}
+Carr, Wegman, D. B. 1996. ``ExplorN: Design Considerations Past and
+Present.'' Fairfax, VA: Center for Computational Statistics, George
+Mason University.
+
+\hypertarget{ref-shiny}{}
+Chang, Winston, Joe Cheng, JJ Allaire, Yihui Xie, and Jonathan
+McPherson. 2015. \emph{shiny: Web Application Framework for R}. R
+package version 0.12.2. \url{http://CRAN.R-project.org/package=shiny}.
+
+\hypertarget{ref-leaflet}{}
+Cheng, Joe, and Yihui Xie. 2015. \emph{leaflet: Create Interactive Web
+Maps with the JavaScript 'Leaflet' Library}. R package version
+1.0.0.9999. \url{http://rstudio.github.io/leaflet/}.
+
+\hypertarget{ref-eechidna}{}
+Cook, Di, Heike Hofmann, Rob Hyndman, Thomas Lumley, Ben Marwick, Carson
+Sievert, Nicholas Tierney, Nathaniel Tomasetti, and Fang Zhou. 2016.
+\emph{eechidna: Exploring Election and Census Highly Informative Data
+Nationally for Australia}. R package version 0.1.
+\url{https://github.com/ropenscilabs/eechidna}.
+
+\hypertarget{ref-ggobi:2007}{}
+Cook, Dianne, and Deborah F. Swayne. 2007. \emph{Interactive and Dynamic
+Graphics for Data Analysis : With R and GGobi}. Use R ! New York:
+Springer. \url{http://www.ggobi.org/book/}.
+
+\hypertarget{ref-Cook:2007uk}{}
+Cook, Dianne, Andreas Buja, and Deborah F Swayne. 1996. ``Interactive
+High-Dimensional Data Visualization.'' \emph{Journal of Computational
+and Graphical Statistics}, December, 1--23.
+
+\hypertarget{ref-anomalous}{}
+Hyndman, Rob J, Earo Wang, and Nikolay Laptev. 2016. \emph{anomalous:
+Unusual Time Series Detection}. R package version 0.1.0.
+
+\hypertarget{ref-Inselberg:85}{}
+Inselberg, Alfred. 1985. ``The Plane with Parallel Coordinates.''
+\emph{Visual Computer} 1 (4): 69--91.
+doi:\href{https://doi.org/10.1007/BF01898350}{10.1007/BF01898350}.
+
+\hypertarget{ref-zika-nyt}{}
+McNeil, Donald G., and Daniel Victor. 2016. ``First U.s. Death Tied to
+Zika Is Reported in Puerto Rico.''
+\url{http://www.nytimes.com/2016/04/30/health/zika-virus-first-death-in-us-puerto-rico.html}.
+
+\hypertarget{ref-melbourne}{}
+Melbourne, City of. 2016. ``City of Melbourne's Open Data Platform.''
+\url{https://data.melbourne.vic.gov.au/}.
+
+\hypertarget{ref-RCore}{}
+R Core Team. 2016. \emph{R: A Language and Environment for Statistical
+Computing}. Vienna, Austria: R Foundation for Statistical Computing.
+\url{http://www.R-project.org/}.
+
+\hypertarget{ref-stl}{}
+R. B. Cleveland, J.E. McRae, W. S. Cleveland, and I. Terpenning. 1990.
+``STL: A Seasonal-Trend Decomposition Procedure Based on Loess.''
+\emph{Journal of Official Statistics}, no. 6: 3--73.
+
+\hypertarget{ref-zika-data}{}
+Rodriguez, Dania M., Michael A Johansson, moiradillon2, Luis
+Mier-y-Teran-Romero, eyq9, YoJimboDurant, Aash Anand, et al. 2016.
+``Zika: September 7, 2016.''
+doi:\href{https://doi.org/10.5281/zenodo.61753}{10.5281/zenodo.61753}.
+
+\hypertarget{ref-pedestrians}{}
+Sievert, Carson. 2016a. \emph{pedestrians: Tools for Exploring
+Melbourne's Pedestrian Data}. R package version 0.0.1.
+\url{https://github.com/cpsievert/pedestrians}.
+
+\hypertarget{ref-plotly-book}{}
+---------. 2016b. ``Plotly for R.''
+\url{https://cpsievert.github.io/plotly_book}.
+
+\hypertarget{ref-zikar}{}
+---------. 2016c. \emph{zikar: Tools for exploring publicly available
+Zika data}. R package version 0.0.0.9000.
+
+\hypertarget{ref-plotly}{}
+Sievert, Carson, Chris Parmer, Toby Hocking, Scott Chamberlain, Karthik
+Ram, Marianne Corvellec, and Pedro Despouy. 2016. \emph{plotly: Create
+Interactive Web Graphics via 'plotly.js'}. R package version 4.5.6.9000.
+\url{https://CRAN.R-project.org/package=plotly}.
+
+\hypertarget{ref-xgobi}{}
+Swayne, Deborah F, Dianne Cook, and Andreas Buja. 1998. ``XGobi:
+Interactive Dynamic Data Visualization in the X Window System.''
+\emph{Journal of Computational and Graphical Statistics} 7 (1): 113--30.
+
+\hypertarget{ref-MANET}{}
+Unwin A., Hofmann H., Hawkins G. 1996. ``Interactive Graphics for Data
+Sets with Missing Values - Manet.'' \emph{Journal of Computational and
+Graphical Statistics} 4 (6).
+
+\hypertarget{ref-tscognostics}{}
+Wang, Earo. 2016. \emph{tscognostics: Time Series Cognostics}. R package
+version 0.0.1. \url{https://github.com/earowang/tscognostics}.
+
+\hypertarget{ref-Wegman:90}{}
+Wegman, E.J. 1990. ``Hyperdimensional Data Analysis Using Parallel
+Coordinates,'' no. 85: 664--75.
+
+\hypertarget{ref-ggplot2}{}
+Wickham, Hadley. 2009. \emph{ggplot2: Elegant Graphics for Data
+Analysis}. Springer-Verlag New York. \url{http://ggplot2.org}.
+
+\hypertarget{ref-model-vis-paper}{}
+Wickham, Hadley, Dianne Cook, and Heike Hofmann. 2015. ``Visualizing
+Statistical Models: Removing the Blindfold.'' \emph{Statistical Analysis
+and Data Mining: The ASA Data Science Journal} 8 (4): 203--25.
+
+\hypertarget{ref-mgcv}{}
+Wood, S.N. 2006. \emph{Generalized Additive Models: An Introduction with
+R}. Chapman; Hall/CRC.
+
 
 
 \end{document}

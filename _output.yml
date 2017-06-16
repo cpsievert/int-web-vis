@@ -4,4 +4,4 @@ bookdown::pdf_book:
   toc: no
   keep_tex: yes
   # hmm, natbib doesn't seem to work?
-  citation_package: biblatex
+  citation_package: none

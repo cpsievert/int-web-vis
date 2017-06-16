@@ -3,4 +3,5 @@ all:
 
 clean:
 	rm -r _bookdown_files/
-	
+	rm -r docs/
+	rm _main.*	

@@ -227,6 +227,9 @@ Interactive web graphics are already widely used for presenting and communicatin
 
 All of the examples in the [exploring pedestrian counts](#exploring-pedestrian-counts) section were created with __plotly__ and are available as standalone HTML files that can be easily deployed and shared with well-established web technologies. The sections [tracking disease outbreak](#tracking-disease-outbreak) and [exploring Australian election data](#exploring-australian-election-data) link __plotly__ graphs using the __shiny__ package for authoring web applications to enable linked interactions that compute statistical summaries based on graphical queries defined by users. Furthermore, all of the examples across all of these sections were created purely within R, and requires no knowledge of web technologies such as HTML/JavaScript/CSS from the user. As a result, projects such as __plotly__ and __shiny__ help analysts focus on their primary task (data analysis) rather than the implementation details typically involved when creating interactive web graphics.
 
+
+\section*{References}
+
 <!--
 # Acknowledgements
 
